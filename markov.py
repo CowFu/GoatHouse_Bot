@@ -58,4 +58,4 @@ def markovChain(user):
     message = message[random.randint(0,len(message)-1)]
     return message    
     
-print(markovChain('shrimpy'))
+#print(markovChain('shrimpy'))
