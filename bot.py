@@ -11,6 +11,7 @@ import json
 from discord.ext import commands
 import markov
 import random
+import re
 
 # establish a connection to the database
 connection = pymongo.MongoClient("mongodb://localhost")
@@ -53,8 +54,9 @@ async def whereis(user: str):
     
 @bot.command()
 async def info(user: str):
+    
     try:
-        result = users.find_one({'User': user})
+        result = users.find_one({'User': re.compile(user, re.IGNORECASE)})
     except Exception as e:
         print("Unexpected error:", type(e), e)
     if(type(result) != None):    
