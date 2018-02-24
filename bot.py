@@ -10,6 +10,7 @@ import pymongo
 import json
 from discord.ext import commands
 import markov
+import random
 
 # establish a connection to the database
 connection = pymongo.MongoClient("mongodb://localhost")
@@ -17,7 +18,6 @@ connection = pymongo.MongoClient("mongodb://localhost")
 # get a handle to the school database
 db = connection.bot
 users = db.users
-
 
 bot = commands.Bot(command_prefix='??', description='Steve\'s robot')
 
@@ -81,6 +81,16 @@ async def updateUser(user: str, field: str, value: str):
         print("Unexpected error:", type(e), e)
             
     await bot.say('Updated user %s\' field %s with new value %s' % (user,field,value))
+
+@bot.command()
+async def roll(dice = 6,number = 1):
+    results = ''
+    
+    for die in range(number):
+        results += str(random.randint(1,dice)) + ', '
+    results = results[:-2]
+    
+    await bot.say('You rolled %s' % results)
     
 @bot.command(pass_context = True)
 async def hello(ctx, member: discord.Member = None):  

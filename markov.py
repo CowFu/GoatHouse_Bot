@@ -59,3 +59,4 @@ def markovChain(user):
     return message    
     
 #print(markovChain('shrimpy'))
+#print(buildChain(readFile('shrimpy.txt'))
