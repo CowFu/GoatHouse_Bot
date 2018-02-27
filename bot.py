@@ -12,6 +12,7 @@ from discord.ext import commands
 import markov
 import random
 import re
+import cards
 
 # establish a connection to the database
 connection = pymongo.MongoClient("mongodb://localhost")
@@ -31,13 +32,15 @@ async def on_ready():
     
     
 @bot.command()
-async def car():
-    await bot.say("beep beep!")
+async def help():
+    await bot.say("Commands: whois <user>, whereis <user>, info <user>, Kyle, "
+                  "shrimpy, Shrimpy, updateUser <user> <field> <attribute>,"
+                  "roll <size> <number>, hello")
 
 @bot.command()
 async def whois(user: str):
     try:
-        result = users.find_one({'User': user})
+        result = users.find_one({'User': re.compile(user, re.IGNORECASE)})
     except Exception as e:
         print("Unexpected error:", type(e), e)
         
@@ -46,15 +49,14 @@ async def whois(user: str):
 @bot.command()
 async def whereis(user: str):
     try:
-        result = users.find_one({'User': user})
+        result = users.find_one({'User': re.compile(user, re.IGNORECASE)})
     except Exception as e:
         print("Unexpected error:", type(e), e)
     if(type(result) != None):
         await bot.say('%s is %s' % (user, result['Address']))   
     
 @bot.command()
-async def info(user: str):
-    
+async def info(user: str):    
     try:
         result = users.find_one({'User': re.compile(user, re.IGNORECASE)})
     except Exception as e:
@@ -78,7 +80,7 @@ async def Shrimpy():
 async def updateUser(user: str, field: str, value: str):
 
     try:
-        users.update({'User': user}, {'$set': {field:value}})
+        users.update({'User': re.compile(user, re.IGNORECASE)}, {'$set': {field:value}})
     except Exception as e:
         print("Unexpected error:", type(e), e)
             
@@ -93,6 +95,19 @@ async def roll(dice = 6,number = 1):
     results = results[:-2]
     
     await bot.say('You rolled %s' % results)
+
+@bot.command()
+async def deck():
+    cards.newGame()
+    await bot.say('Created a new deck of cards')
+    
+@bot.command()
+async def deal(number = 1):
+    await bot.say(cards.deal(number))
+    
+@bot.command()
+async def deckStatus():
+    await bot.say(cards.count())
     
 @bot.command(pass_context = True)
 async def hello(ctx, member: discord.Member = None):  
