@@ -26,7 +26,7 @@ def newGame():
     
 def deal(number = 1):
     cards = '__**'
-    if(len(c.deck) > number):
+    if(len(c.deck) >= number):
         for a in range(0,number):    
             cards += c.deck.pop(0) + "**__, __**"
         return cards[:-6]

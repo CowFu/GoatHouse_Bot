@@ -32,7 +32,7 @@ async def on_ready():
     
     
 @bot.command()
-async def help():
+async def commands():
     await bot.say("Commands: whois <user>, whereis <user>, info <user>, Kyle, "
                   "shrimpy, Shrimpy, updateUser <user> <field> <attribute>,"
                   "roll <size> <number>, hello")
