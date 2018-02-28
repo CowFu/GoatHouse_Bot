@@ -35,7 +35,15 @@ async def on_ready():
 async def commands():
     await bot.say("Commands: whois <user>, whereis <user>, info <user>, Kyle, "
                   "shrimpy, Shrimpy, updateUser <user> <field> <attribute>,"
-                  "roll <size> <number>, hello")
+                  "roll <size> <number>, hello, deck, draw <number>, deckStatus")
+
+@bot.command(pass_context = True)
+async def hello(ctx, member: discord.Member = None):  
+    if member is None:
+        member = ctx.message.author
+        print('switched to author')
+    print(str(ctx.message.author) + "called hello")
+    await bot.say(':slight_smile: hello ' + str(member))
 
 @bot.command()
 async def whois(user: str):
@@ -65,6 +73,15 @@ async def info(user: str):
         await bot.say('%s or \'%s\' lives at %s, phone: %s email: %s' % (result['User'],result['Name'],result['Address'],result['Phone'],result['email'])) 
 
 @bot.command()
+async def updateUser(user: str, field: str, value: str):
+    try:
+        users.update({'User': re.compile(user, re.IGNORECASE)}, {'$set': {field:value}})
+    except Exception as e:
+        print("Unexpected error:", type(e), e)
+            
+    await bot.say('Updated user %s\' field %s with new value %s' % (user,field,value))
+
+@bot.command()
 async def Kyle():
     await bot.say(markov.markovChain('Kyle'))        
     
@@ -75,16 +92,6 @@ async def shrimpy():
 @bot.command()
 async def Shrimpy():
     await bot.say(markov.markovChain('shrimpy'))            
-    
-@bot.command()
-async def updateUser(user: str, field: str, value: str):
-
-    try:
-        users.update({'User': re.compile(user, re.IGNORECASE)}, {'$set': {field:value}})
-    except Exception as e:
-        print("Unexpected error:", type(e), e)
-            
-    await bot.say('Updated user %s\' field %s with new value %s' % (user,field,value))
 
 @bot.command()
 async def roll(dice = 6,number = 1):
@@ -108,15 +115,7 @@ async def deal(number = 1):
 @bot.command()
 async def deckStatus():
     await bot.say(cards.count())
-    
-@bot.command(pass_context = True)
-async def hello(ctx, member: discord.Member = None):  
-    if member is None:
-        member = ctx.message.author
-        print('switched to author')
-    print(str(ctx.message.author) + "called hello")
-    await bot.say(':slight_smile: fuck you ' + str(member))
-
+   
 
 auth = json.load(open('auth.json'))
 bot.run(auth['token'])

@@ -35,4 +35,5 @@ def deal(number = 1):
 def count():
     return(str(len(c.deck)) + ' cards remaining in the deck') 
 
+#global variable to keep persistant deck
 c = Cards()
