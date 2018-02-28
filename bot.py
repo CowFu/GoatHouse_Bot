@@ -108,9 +108,15 @@ async def deck():
     cards.newGame()
     await bot.say('Created a new deck of cards')
     
-@bot.command()
-async def deal(number = 1):
-    await bot.say(cards.deal(number))
+@bot.command(pass_context = True)
+async def deal(ctx,number = 1):
+    member = ctx.message.author
+    await bot.say(cards.deal(str(member), number))
+
+@bot.command(pass_context = True)
+async def hand(ctx,number = 1):
+    member = ctx.message.author
+    await bot.say(cards.hand(str(member)))   
     
 @bot.command()
 async def deckStatus():
