@@ -49,7 +49,8 @@ async def info(ctx):
         name=bot.user.name,
         id=bot.user.id))
     await ctx.send("Commands: Kyle, shrimpy, Shrimpy, Youtube <search>"
-                   "roll <size> <num>, hello, deck, draw <num>, deckStatus")
+                   "roll <size> <num>, hello, deck, draw <num>, deckStatus"
+                   "goddamnfuckingsteve, namegen")
 
 
 @bot.command(pass_context=True)
@@ -135,8 +136,18 @@ async def pokemon(ctx, *args):
 
 
 @bot.command()
-async def namegen(ctx, name='help'):
+async def namegen(ctx, first_name='help', second_name=''):
+    if (second_name != ''):
+        name = first_name + ' ' + second_name
+    else:
+        name = first_name
     await ctx.send(names.name_generator(name))
+
+
+@bot.command()
+async def goddamnfuckingsteve(ctx):
+    quotes = json.load(open('ref/quotes.json'))
+    await ctx.send(quotes['goddamnfuckingsteve'])
 
 auth = json.load(open('auth.json'))
 bot.run(auth['token'])
