@@ -9,7 +9,7 @@ import discord
 import urllib
 import logging
 import datetime
-import pymongo
+# import pymongo
 import json
 
 from discord.ext import commands
@@ -21,11 +21,11 @@ import cards
 import names
 
 # establish a connection to the database
-connection = pymongo.MongoClient("mongodb://localhost")
+# connection = pymongo.MongoClient("mongodb://localhost")
 
 # get a handle to the school database
-db = connection.bot
-users = db.users
+# db = connection.bot
+# users = db.users
 
 bot = commands.Bot(command_prefix='??', description='Steve\'s robot')
 
@@ -48,9 +48,9 @@ async def info(ctx):
         timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         name=bot.user.name,
         id=bot.user.id))
-    await ctx.send("Commands: Kyle, shrimpy, Shrimpy, Youtube <search>"
+    await ctx.send("Commands: Kyle, shrimpy, Shrimpy, youtube <search>"
                    "roll <size> <num>, hello, deck, draw <num>, deckStatus"
-                   "goddamnfuckingsteve, namegen")
+                   "goddamnfuckingsteve, namegen, gotm")
 
 
 @bot.command(pass_context=True)
@@ -142,6 +142,44 @@ async def namegen(ctx, first_name='help', second_name=''):
     else:
         name = first_name
     await ctx.send(names.name_generator(name))
+
+
+@bot.command()
+async def gotm(ctx, gotm_command='info', *, setter=''):
+    gotm = json.load(open('ref/gotm.json'))
+    gotm_command = gotm_command.lower()
+    response = ''
+    if (gotm_command == 'info'):
+        response = 'Game of the month is {current}, next month is {next}'.format(
+            current=gotm["current"],
+            next=gotm["next"])
+    elif (gotm_command == 'set'):
+        if (setter == ''):
+            response = 'to set the current game use ??gotm set "name of game"'
+        response = str(ctx.message.author) + ' changed current game to ' + setter
+        gotm["log"].append(response)
+        gotm["current"] = setter
+    elif (gotm_command == 'next'):
+        if (setter == ''):
+            response = 'Next month\'s game is {next}'.format(next=gotm["next"])
+        else:
+            response = str(ctx.message.author) + ' changed next game to ' + setter
+            gotm["log"].append(response)
+            gotm["next"] = setter
+    elif (gotm_command == 'nextgame'):
+        if (gotm["next"] != ''):
+            response = str(ctx.message.author) + " changed the current game to " + gotm["next"] + \
+                " next month's game needs to be set"
+            gotm["current"] = gotm["next"]
+            gotm["next"] = ''
+            gotm["log"].append(response)
+        else:
+            response = "there is no next game to switch to"
+    else:
+        response = 'valid ??gotm commands are <(null)/info/set "game name"/next "game name"/nextgame/review>'
+    with open('ref/gotm.json', 'w') as outfile:
+        json.dump(gotm, outfile)
+    await ctx.send(response)
 
 
 @bot.command()
